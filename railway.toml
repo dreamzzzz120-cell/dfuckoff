@@ -1,0 +1,21 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Start the same hardened application entrypoint used by the production image.
+# The Dockerfile already switches to worker/bootstrap/migrate roles through
+# PROCESS_ROLE; Railway production defaults to the web server.
+startCommand = "node dist/server.cjs"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Required production variables are documented in RAILWAY_DEPLOY.md.
+# APP_URL must be a valid HTTPS URL in production.
+# APP_ALLOWED_ORIGINS should contain only trusted frontend origins.
+# FIREBASE_SERVICE_ACCOUNT_KEY must remain a Railway secret.
+# REDIS_URL is required for the shared production rate limiter.
+# Migrations run separately via PROCESS_ROLE=migrate / Railway CLI.
+# Release trigger: production configuration validated after the 2026-08-17 audit.
